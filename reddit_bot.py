@@ -21,19 +21,32 @@ class RedditBot:
 
     def process_comment(self, comment):
         metric_units = self.detect_metric(comment.body)
-        print(metric_units)
+        print("Metric Units Detected:", metric_units)
+
+        imperial_units = self.detect_imperial(comment.body)
+        print("Imperial Units Detected:", imperial_units)
 
     def detect_metric(self, text):
-        meter_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
-        gram_pattern = r"\b(\d+(\.\d+)?)\s?(g|gram|kilogram|milligram|centigram|microgram|kg|mg|cg|µg)s?\b"
-        liter_pattern = r"\b(\d+(\.\d+)?)\s?(l|liter|litre|milliliter|millilitre|centiliter|centilitre|microliter|microlitre|ml|cl|µl)s?\b"
-        celsius_pattern = r"\b(\d+(\.\d+)?)\s?°?C\b|celsius\b"
+        length_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
+        mass_pattern = r"\b(\d+(\.\d+)?)\s?(g|gram|kilogram|milligram|centigram|microgram|kg|mg|cg|µg)s?\b"
+        volume_pattern = r"\b(\d+(\.\d+)?)\s?(l|liter|litre|milliliter|millilitre|cl|dl|ml)s?\b"
+        temperature_pattern = r"\b(\d+(\.\d+)?)\s?°?C\b|celsius\b"
 
-        metric_data = []
-        for pattern in [meter_pattern, gram_pattern, liter_pattern, celsius_pattern]:
+        return self.extract_units(text, [length_pattern, mass_pattern, volume_pattern, temperature_pattern])
+
+    def detect_imperial(self, text):
+        length_pattern = r"\b(\d+(\.\d+)?)\s?(in|inch|inches|ft|foot|feet|yd|yard|yards|mi|mile|miles)s?\b"
+        mass_pattern = r"\b(\d+(\.\d+)?)\s?(lb|lbs|pound|pounds|oz|ounce|ounces|ton|tons)s?\b"
+        volume_pattern = r"\b(\d+(\.\d+)?)\s?(qt|quart|quarts|pt|pint|pints|gal|gallon|gallons|fl oz|fluid ounce|fluid ounces)s?\b"
+        temperature_pattern = r"\b(\d+(\.\d+)?)\s?°?F\b|fahrenheit\b"
+
+        return self.extract_units(text, [length_pattern, mass_pattern, volume_pattern, temperature_pattern])
+
+    def extract_units(self, text, patterns):
+        units_data = []
+        for pattern in patterns:
             matches = re.findall(pattern, text)
             for match in matches:
-                value, unit = match[0], ''.join(match[1:])
-                metric_data.append((value, unit))
-
-        return metric_data
+                value, unit = match[0], match[2]
+                units_data.append((value, unit))
+        return units_data
