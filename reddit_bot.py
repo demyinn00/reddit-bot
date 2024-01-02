@@ -1,4 +1,5 @@
 import os
+import re
 import praw
 
 class RedditBot:
@@ -19,4 +20,20 @@ class RedditBot:
             print("Bot stopped manually.")
 
     def process_comment(self, comment):
-        print(comment.body)
+        metric_units = self.detect_metric(comment.body)
+        print(metric_units)
+
+    def detect_metric(self, text):
+        meter_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
+        gram_pattern = r"\b(\d+(\.\d+)?)\s?(g|gram|kilogram|milligram|centigram|microgram|kg|mg|cg|µg)s?\b"
+        liter_pattern = r"\b(\d+(\.\d+)?)\s?(l|liter|litre|milliliter|millilitre|centiliter|centilitre|microliter|microlitre|ml|cl|µl)s?\b"
+        celsius_pattern = r"\b(\d+(\.\d+)?)\s?°?C\b|celsius\b"
+
+        metric_data = []
+        for pattern in [meter_pattern, gram_pattern, liter_pattern, celsius_pattern]:
+            matches = re.findall(pattern, text)
+            for match in matches:
+                value, unit = match[0], ''.join(match[1:])
+                metric_data.append((value, unit))
+
+        return metric_data
