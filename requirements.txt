@@ -1,3 +1,4 @@
 praw
 pint
 requests
+python-dotenv
