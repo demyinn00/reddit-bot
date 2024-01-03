@@ -9,7 +9,9 @@ class RedditBot:
         self.reddit = praw.Reddit(
             client_id=os.getenv("REDDIT_CLIENT_ID"),
             client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-            user_agent=os.getenv("REDDIT_USER_AGENT")
+            user_agent=os.getenv("REDDIT_USER_AGENT"),
+            username=os.getenv("REDDIT_USERNAME"),
+            password=os.getenv("REDDIT_PASSWORD")
         )
         self.subreddits = [self.reddit.subreddit(name) for name in subreddit_names]
         self.ureg = UnitRegistry()
@@ -43,7 +45,7 @@ class RedditBot:
         self.measurement_types = {
             "length": ["m", "km", "cm", "mm", "in", "ft", "yd", "mi"],
             "mass": ["g", "kg", "mg", "cg", "µg", "lb", "oz", "ton"],
-            "volume": ["l", "ml", "cl", "dl", "qt", "pt", "gal", "fl oz", "imperial_fluid_ounce"],
+            "volume": ["kl", "l", "ml", "cl", "dl", "qt", "pt", "gal", "fl oz", "imperial_fluid_ounce"],
             "temperature": ["°C", "°F"]
         }
         self.imperial_types = {
@@ -84,11 +86,19 @@ class RedditBot:
         if need_response: 
             response_text = self.generate_response(metric_units)
             print(f"Response: {response_text}")
+            self.respond_to_comment(comment, response_text)
+
+    def respond_to_comment(self, comment, response_text):
+        try:
+            comment.reply(response_text)
+            print(f"Replied to comment{comment.id}")
+        except Exception as e:
+            print(f"Error: {e}")
 
     def detect_metric(self, text):
         length_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
         mass_pattern = r"\b(\d+(\.\d+)?)\s?(g|gram|kilogram|milligram|centigram|microgram|kg|mg|cg|µg)s?\b"
-        volume_pattern = r"\b(\d+(\.\d+)?)\s?(l|liter|litre|milliliter|millilitre|cl|dl|ml)s?\b"
+        volume_pattern = r"\b(\d+(\.\d+)?)\s?(kl|kiloliter|kilolitre|l|liter|litre|milliliter|millilitre|centiliter|centilitre|deciliter|decilitre|ml|cl|dl)s?\b"
         temperature_pattern = r"\b(\d+(\.\d+)?)\s?°?C\b|celsius\b"
 
         return self.extract_units(text, [length_pattern, mass_pattern, volume_pattern, temperature_pattern])
