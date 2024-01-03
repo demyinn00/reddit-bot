@@ -84,6 +84,10 @@ class RedditBot:
         if need_response: 
             response_text = self.generate_response(metric_units)
             print(f"Response: {response_text}")
+            self.respond_to_comment(comment, response_text)
+
+    def respond_to_comment(self, comment, response_text):
+        return 0
 
     def detect_metric(self, text):
         length_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
