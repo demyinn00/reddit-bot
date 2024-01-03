@@ -1,16 +1,17 @@
 import os
+import threading
 import re
 import praw
 from pint import UnitRegistry
 
 class RedditBot:
-    def __init__(self, subreddit_name):
+    def __init__(self, subreddit_names):
         self.reddit = praw.Reddit(
             client_id=os.getenv("REDDIT_CLIENT_ID"),
             client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
             user_agent=os.getenv("REDDIT_USER_AGENT")
         )
-        self.subreddit = self.reddit.subreddit(subreddit_name)
+        self.subreddits = [self.reddit.subreddit(name) for name in subreddit_names]
         self.ureg = UnitRegistry()
 
         self.normalize_mapping = {
@@ -54,11 +55,21 @@ class RedditBot:
 
     def start_streaming(self):
         try:
-            print(self.subreddit)
-            for comment in self.subreddit.stream.comments(skip_existing=True):
-                self.process_comment(comment)
+            threads = []
+            for subreddit in self.subreddits:
+                thread = threading.Thread(target=self.monitor_subreddit, args=(subreddit,))
+                threads.append(thread)
+                thread.start()
+
+            for thread in threads:
+                thread.join()
         except KeyboardInterrupt:
             print("Bot stopped manually.")
+
+    def monitor_subreddit(self, subreddit):
+        print(subreddit.display_name)
+        for comment in subreddit.stream.comments(skip_existing=True):
+            self.process_comment(comment)
 
     def process_comment(self, comment):
         metric_units = self.detect_metric(comment.body)
@@ -136,10 +147,14 @@ class RedditBot:
             if metric_unit in self.measurement_types[measurement]:
                 for imperial_unit in units:
                     converted_to_imperial_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
-                    if converted_to_imperial_value is not None:
-                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
-                    elif converted_to_imperial_value >= 1: 
+                    if converted_to_imperial_value is None:
+                        return None
+                    elif converted_to_imperial_value < 1:
                         return last_pair
+                    else: 
+                        print(f"in the else statement: {last_pair} {imperial_unit}")
+                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
+                        print(f"in the else statement: {last_pair} {imperial_unit}")
 
         return last_pair
 
