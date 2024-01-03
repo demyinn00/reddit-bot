@@ -4,7 +4,8 @@ load_dotenv()
 from reddit_bot import RedditBot
 
 def main():
-    bot = RedditBot(subreddit_name="debugmurica")
+    subreddit_names = ["debugmurica", "morenmoretesting"]
+    bot = RedditBot(subreddit_names)
     bot.start_streaming()
 
 if __name__ == "__main__":
