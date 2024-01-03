@@ -36,19 +36,19 @@ class RedditBot:
             "quarts": "qt", "quart": "qt",
             "pints": "pt", "pint": "pt",
             "gallons": "gal", "gallon": "gal",
-            "fluid ounces": "fl oz", "fluid ounce": "fl oz",
+            "fluid ounces": "imperial_fluid_ounce", "fluid ounce": "imperial_fluid_ounce",
             "fahrenheit": "°F"
         }
         self.measurement_types = {
             "length": ["m", "km", "cm", "mm", "in", "ft", "yd", "mi"],
             "mass": ["g", "kg", "mg", "cg", "µg", "lb", "oz", "ton"],
-            "volume": ["l", "ml", "cl", "dl", "qt", "pt", "gal", "fl oz"],
+            "volume": ["l", "ml", "cl", "dl", "qt", "pt", "gal", "fl oz", "imperial_fluid_ounce"],
             "temperature": ["°C", "°F"]
         }
         self.imperial_types = {
             "length": ["in", "ft", "yd", "mi"],
-            "mass": ["lb", "oz", "ton"],
-            "volume": ["qt", "pt", "gal", "fl oz"],
+            "mass": ["oz", "lb", "ton"],
+            "volume": ["imperial_fluid_ounce", "pt", "qt", "gal"],
             "temperature": ["°F"]
         }
 
@@ -69,6 +69,10 @@ class RedditBot:
 
         need_response = self.response_needed(metric_units, imperial_units)
         print(f"Need a response: {need_response}")
+
+        if need_response: 
+            response_text = self.generate_response(metric_units)
+            print(f"Response: {response_text}")
 
     def detect_metric(self, text):
         length_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
@@ -99,19 +103,45 @@ class RedditBot:
         return units_data
 
     def response_needed(self, metric_units, imperial_units): 
+        if len(metric_units) == 0:
+            return False
+
         if len(metric_units) != len(imperial_units):
             return True
-        
+
         for metric_tuple, imperial_tuple in zip(metric_units, imperial_units):
             metric_value, metric_unit = metric_tuple
             imperial_value, imperial_unit = imperial_tuple
 
             converted_to_imperial_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
             print(converted_to_imperial_value)
-            if converted_to_imperial_value < 0 or not self.close_enough(float(converted_to_imperial_value), float(imperial_value)):
+            if converted_to_imperial_value is None or not self.close_enough(float(converted_to_imperial_value), float(imperial_value)):
                 return True
             
         return False
+
+    def generate_response(self, metric_units):
+        responses = []
+        for metric_value, metric_unit in metric_units:
+            best_conversion = self.find_best_conversion(metric_value, metric_unit)
+            if best_conversion:
+                imperial_value, imperial_unit = best_conversion
+                responses.append(f"{metric_value} {metric_unit} is {imperial_value} {imperial_unit}")
+        return " ".join(responses)
+
+    def find_best_conversion(self, metric_value, metric_unit):
+        last_pair = tuple()
+
+        for measurement, units in self.imperial_types.items():
+            if metric_unit in self.measurement_types[measurement]:
+                for imperial_unit in units:
+                    converted_to_imperial_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
+                    if converted_to_imperial_value is not None:
+                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
+                    elif converted_to_imperial_value >= 1: 
+                        return last_pair
+
+        return last_pair
 
     def convert_to_imperial(self, metric_value, metric_unit, imperial_unit):
         if self.is_compatible(metric_unit, imperial_unit):
@@ -120,11 +150,11 @@ class RedditBot:
                 imperial_quantity = metric_quantity.to(imperial_unit)
                 return imperial_quantity.magnitude
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"Error converting {metric_value} {metric_unit} to {imperial_unit}: {e}")
                 return None
         else:
             print("Incompatible units")
-            return -1
+            return None
 
     def is_compatible(self, metric_unit, imperial_unit):
         for units in self.measurement_types.values():
