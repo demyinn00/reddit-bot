@@ -147,10 +147,14 @@ class RedditBot:
             if metric_unit in self.measurement_types[measurement]:
                 for imperial_unit in units:
                     converted_to_imperial_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
-                    if converted_to_imperial_value is not None:
-                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
-                    elif converted_to_imperial_value >= 1: 
+                    if converted_to_imperial_value is None:
+                        return None
+                    elif converted_to_imperial_value < 1:
                         return last_pair
+                    else: 
+                        print(f"in the else statement: {last_pair} {imperial_unit}")
+                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
+                        print(f"in the else statement: {last_pair} {imperial_unit}")
 
         return last_pair
 
