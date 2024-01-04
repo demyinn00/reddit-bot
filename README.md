@@ -33,7 +33,7 @@ python3 main.py
 ## Known Issues
 - **API Rate Limiting**: Extensive use of the Reddit API, especially during development and testing, can lead to hitting the rate limits imposed by Reddit. This can temporarily block the bot from accessing Reddit data.
 - **Subreddit Accessibility**: The bot may encounter issues if it tries to access a subreddit that is private, restricted, or banned.
-  - It also might get flagged for spamming (I've gottne banned multiple times...)
+  - It also might get flagged for spamming (I've gotten banned multiple times...)
   - I found that it works best on a subreddit owned by the bot's reddit acccount, but it does work on other subreddits. Just be warned, your bot might get shadowbanned. 
 - **Unit Conversion Limitations**: The bot currently handles a predefined set of metric units. It may not recognize or correctly convert units that are not explicitly defined in its configuration.
   - The main units that it recognizes (in most both abbreviated and non-abbreviated formats) are: 
