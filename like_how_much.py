@@ -7,54 +7,50 @@ class LikeHowMuch:
 
         # in meters
         self.length_examples = {
-            "sheet of paper": {"value": 0.0001, "singular": "sheet of paper", "plural": "sheets of paper", "phrase": "stacked vertically"},
-            "US penny": {"value": 0.00152, "singular": "US penny", "plural": "US pennies", "phrase": "stacked vertically"},
-            "slice of bread": {"value": 0.0127, "singular": "slice of bread", "plural": "slices of bread", "phrase": "laid end to end"},
-            "Mona Lisa": {"value": 0.772, "singular": "Mona Lisa", "plural": "Mona Lisas", "phrase": "tall"},
-            "Aang's Staff": {"value": 1.8, "singular": "Aang's Staff", "plural": "Aang's Staffs", "phrase": "long"},
-            "Voldemort": {"value": 1.94, "singular": "Voldemort", "plural": "Voldemorts", "phrase": "tall"},
-            "giraffe": {"value": 5.3, "singular": "giraffe", "plural": "giraffes", "phrase": "tall"},
-            "Attack Titan": {"value": 15, "singular": "Attack Titan", "plural": "Attack Titans", "phrase": "tall"},
-            "Colossal Titan": {"value": 60, "singular": "Colossal Titan", "plural": "Colossal Titans", "phrase": "tall"}
+            "sheet of paper": {"value": 0.0001, "singular": "the thickness of a sheet of paper", "plural": "sheets of paper stacked vertically", "phrase": ""},
+            "US penny": {"value": 0.00152, "singular": "the thickness of a US penny", "plural": "US pennies stacked vertically", "phrase": ""},
+            "slice of bread": {"value": 0.0127, "singular": "the thickness of a slice of bread", "plural": "slices of bread laid end to end", "phrase": ""},
+            "Mona Lisa": {"value": 0.772, "singular": "of the height of the Mona Lisa", "plural": "Mona Lisas tall", "phrase": ""},
+            "Aang's Staff": {"value": 1.8, "singular": "of Aang's staff from Avatar", "plural": "Aang's staffs", "phrase": ""},
+            "Voldemort": {"value": 1.94, "singular": "Voldemort", "plural": "Voldemorts", "phrase": ""},
+            "giraffe": {"value": 5.3, "singular": "giraffe", "plural": "giraffes", "phrase": ""},
+            "Attack Titan": {"value": 15, "singular": "Attack Titan", "plural": "Attack Titans", "phrase": ""},
+            "Colossal Titan": {"value": 60, "singular": "Colossal Titan", "plural": "Colossal Titans", "phrase": ""}
         }
 
         # in grams
         self.mass_examples = {
-            "single eyelash": {"value": 0.00017, "singular": "single eyelash", "plural": "single eyelashes", "phrase": "heavy"},
-            "average ant": {"value": 0.0025, "singular": "average ant", "plural": "average ants", "phrase": "heavy"},
-            "iPhone 15": {"value": 171, "singular": "iPhone 15", "plural": "iPhone 15s", "phrase": "heavy"},
-            "toilet paper roll": {"value": 227, "singular": "toilet paper roll", "plural": "toilet paper rolls", "phrase": "heavy"},
-            "empty hydro flask": {"value": 499, "singular": "empty 40 oz hydro flask", "plural": "empty 40 oz hydro flasks", "phrase": "heavy"},
-            "average raccoon": {"value": 22000, "singular": "average raccoon", "plural": "average raccoons", "phrase": "heavy"},
-            "average panda": {"value": 110000, "singular": "average panda", "plural": "average pandas", "phrase": "heavy"},
-            "Charizard": {"value": 90718.5, "singular": "Charizard", "plural": "Charizards", "phrase": "heavy"},
-            "Mercedes Benz": {"value": 1814369, "singular": "Mercedes Benz", "plural": "Mercedes Benzes", "phrase": "heavy"}
+            "single eyelash": {"value": 0.00017, "singular": "single eyelash", "plural": "single eyelashes", "phrase": ""},
+            "average ant": {"value": 0.0025, "singular": "average ant", "plural": "average ants", "phrase": ""},
+            "iPhone 15": {"value": 171, "singular": "iPhone 15", "plural": "iPhone 15s", "phrase": ""},
+            "toilet paper roll": {"value": 227, "singular": "toilet paper roll", "plural": "toilet paper rolls", "phrase": ""},
+            "empty hydro flask": {"value": 499, "singular": "empty 40 oz hydro flask", "plural": "empty 40 oz hydro flasks", "phrase": ""},
+            "average raccoon": {"value": 22000, "singular": "average raccoon", "plural": "average raccoons", "phrase": ""},
+            "average panda": {"value": 110000, "singular": "average panda", "plural": "average pandas", "phrase": ""},
+            "Charizard": {"value": 90718.5, "singular": "Charizard", "plural": "Charizards", "phrase": ""},
+            "Mercedes Benz": {"value": 1814369, "singular": "Mercedes Benz", "plural": "Mercedes Benzes", "phrase": ""}
         }
 
         # in liters
         self.volume_examples = {
-            "soda can": {"value": 0.355, "singular": "soda can", "plural": "soda cans", "phrase": "full"},
-            "basketball": {"value": 7.5, "singular": "basketball", "plural": "basketballs", "phrase": "inflated"},
-            "car gas tank": {"value": 55, "singular": "car gas tank", "plural": "car gas tanks", "phrase": "full"},
-            "bathtub": {"value": 175, "singular": "average bathtub", "plural": "average bathtubs", "phrase": "full"},
-            "home fridge": {"value": 600, "singular": "average home fridge", "plural": "average home fridges", "phrase": "volume"},
-            "Reflecting Pool": {"value": 10000, "singular": "Reflecting Pool at Lincoln Memorial", "plural": "Reflecting Pools at Lincoln Memorial", "phrase": "full"},
-            "Water tanker truck": {"value": 30000, "singular": "water tanker truck", "plural": "water tanker trucks", "phrase": "full"},
-            "Olympic pool": {"value": 2500000, "singular": "Olympic swimming pool", "plural": "Olympic swimming pools", "phrase": "full"},
-            "Lake Baikal": {"value": 23600000000000, "singular": "Lake Baikal in Siberia", "plural": "Lake Baikals in Siberia", "phrase": "volume"}
+            "soda can": {"value": 0.355, "singular": "soda can", "plural": "soda cans", "phrase": ""},
+            "basketball": {"value": 7.5, "singular": "basketball", "plural": "basketballs", "phrase": ""},
+            "car gas tank": {"value": 55, "singular": "car gas tank", "plural": "car gas tanks", "phrase": ""},
+            "bathtub": {"value": 175, "singular": "average bathtub", "plural": "average bathtubs", "phrase": ""},
+            "home fridge": {"value": 600, "singular": "average home fridge", "plural": "average home fridges", "phrase": ""},
+            "Reflecting Pool": {"value": 10000, "singular": "Reflecting Pool at Lincoln Memorial", "plural": "Reflecting Pools at Lincoln Memorial", "phrase": ""},
+            "Water tanker truck": {"value": 30000, "singular": "water tanker truck", "plural": "water tanker trucks", "phrase": ""},
+            "Olympic pool": {"value": 2500000, "singular": "olympic swimming pool", "plural": "olympic swimming pools", "phrase": ""},
+            "Lake Baikal": {"value": 23600000000000, "singular": "Lake Baikal in Siberia", "plural": "Lake Baikals in Siberia", "phrase": ""}
         }
 
         # in Celsius
         self.temperature_examples = {
-            "Liquid Nitrogen": {"value": -196, "singular": "Liquid Nitrogen", "plural": "Liquid Nitrogen", "phrase": "cold"},
-            "Dry Ice": {"value": -78.5, "singular": "Dry Ice", "plural": "Dry Ice", "phrase": "cold"},
-            "Siberian Winter": {"value": -50, "singular": "Winter in Siberia", "plural": "Winters in Siberia", "phrase": "cold"},
-            "Freezing Point": {"value": 0, "singular": "Water freezing point", "plural": "Water freezing points", "phrase": "cold"},
-            "Body Temperature": {"value": 37, "singular": "Human Body Temperature", "plural": "Human Body Temperatures", "phrase": "warm"},
-            "Boiling Point": {"value": 100, "singular": "Water boiling point", "plural": "Water boiling points", "phrase": "hot"},
-            "Lead Melting Point": {"value": 327.5, "singular": "Melting Point of Lead", "plural": "Melting Points of Lead", "phrase": "hot"},
-            "Lava": {"value": 1000, "singular": "Lava", "plural": "Lava", "phrase": "hot"},
-            "Sun Surface": {"value": 5500, "singular": "Surface of the Sun", "plural": "Surfaces of the Sun", "phrase": "extremely hot"}
+            "Body Temperature": {"value": 37, "singular": "of the human body's temperature", "plural": "times the human body's temperature", "phrase": ""},
+            "Boiling Point": {"value": 100, "singular": "of water's boiling point", "plural": "times water's boiling point", "phrase": ""},
+            "Lead Melting Point": {"value": 327.5, "singular": "of lead's melting point", "plural": "times hotter than lead's melting point", "phrase": ""},
+            "Lava": {"value": 1000, "singular": "of lava's temperature", "plural": "times lava's temperature", "phrase": ""},
+            "Sun Surface": {"value": 5500, "singular": "of the sun's surface", "plural": "times hotter than the sun's surface", "phrase": ""}
         }
 
 
@@ -62,7 +58,7 @@ class LikeHowMuch:
         _, example_data = random.choice(list(examples.items()))
         compare_value = input_value / example_data["value"]
         unit_form = example_data["plural"] if compare_value > 1 else example_data["singular"]
-        return f"That's like {compare_value:4f} {unit_form} {example_data['phrase']}!"
+        return f"That's like {compare_value:4f} {unit_form}!"
 
     def compare_length(self, value, unit):
         meters = self.convert_to_standard_metric(value, unit, "length")
