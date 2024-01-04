@@ -3,6 +3,7 @@ import threading
 import re
 import praw
 from pint import UnitRegistry
+from like_how_much import LikeHowMuch
 
 class RedditBot:
     def __init__(self, subreddit_names):
@@ -15,6 +16,7 @@ class RedditBot:
         )
         self.subreddits = [self.reddit.subreddit(name) for name in subreddit_names]
         self.ureg = UnitRegistry()
+        self.lhm = LikeHowMuch()
 
         self.normalize_mapping = {
             "meters": "m", "meter": "m", "metre": "m", "metres": "m",
@@ -86,7 +88,7 @@ class RedditBot:
         if need_response: 
             response_text = self.generate_response(metric_units)
             print(f"Response: {response_text}")
-            self.respond_to_comment(comment, response_text)
+            # self.respond_to_comment(comment, response_text)
 
     def respond_to_comment(self, comment, response_text):
         try:
@@ -147,26 +149,40 @@ class RedditBot:
             best_conversion = self.find_best_conversion(metric_value, metric_unit)
             if best_conversion:
                 imperial_value, imperial_unit = best_conversion
-                responses.append(f"{metric_value} {metric_unit} is {imperial_value} {imperial_unit}")
+                conversion_response = f"{metric_value} {metric_unit} is {imperial_value} {imperial_unit}."
+
+                if metric_unit in self.measurement_types["length"]:
+                    fun_response = self.lhm.compare_length(float(metric_value), metric_unit)
+                elif metric_unit in self.measurement_types["mass"]:
+                    fun_response = self.lhm.compare_mass(float(metric_value), metric_unit)
+                elif metric_unit in self.measurement_types["volume"]:
+                    fun_response = self.lhm.compare_volume(float(metric_value), metric_unit)
+                elif metric_unit in self.measurement_types["temperature"]:
+                    fun_response = self.lhm.compare_temperature(float(metric_value), metric_unit)
+                else:
+                    fun_response = ""
+
+                full_response = f"{conversion_response} {fun_response}"
+                responses.append(full_response)
+            else:
+                responses.append(f"Oops! I couldn't convert {metric_value} {metric_unit} to imperial units!")
         return " ".join(responses)
 
     def find_best_conversion(self, metric_value, metric_unit):
-        last_pair = tuple()
+        last_pair = None
 
         for measurement, units in self.imperial_types.items():
             if metric_unit in self.measurement_types[measurement]:
                 for imperial_unit in units:
-                    converted_to_imperial_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
-                    if converted_to_imperial_value is None:
-                        return None
-                    elif converted_to_imperial_value < 1:
-                        return last_pair
-                    else: 
-                        print(f"in the else statement: {last_pair} {imperial_unit}")
-                        last_pair = (round(converted_to_imperial_value, 2), imperial_unit)
-                        print(f"in the else statement: {last_pair} {imperial_unit}")
+                    converted_value = self.convert_to_imperial(metric_value, metric_unit, imperial_unit)
+                    if converted_value is not None:
+                        if converted_value >= 1:
+                            last_pair = (round(converted_value, 2), imperial_unit)
+                        elif last_pair is None:
+                            last_pair = (round(converted_value, 2), imperial_unit)
 
         return last_pair
+
 
     def convert_to_imperial(self, metric_value, metric_unit, imperial_unit):
         if self.is_compatible(metric_unit, imperial_unit):
