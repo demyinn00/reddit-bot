@@ -151,7 +151,7 @@ class RedditBot:
         return False
 
     def generate_response(self, metric_units):
-        responses = []
+        responses = ["I am a bot and this action was performed automatically.\n"]
         for metric_value, metric_unit in metric_units:
             best_conversion = self.find_best_conversion(metric_value, metric_unit)
             if best_conversion:

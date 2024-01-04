@@ -5,7 +5,7 @@ from reddit_bot import RedditBot
 
 def main():
     # Add the list of subreddits you'd like to add here
-    subreddit_names = ["thelastdebuggernoban", "lastsubredditdebugger"]
+    subreddit_names = ["debuggingredditproj"]
     bot = RedditBot(subreddit_names)
     bot.start_streaming()
 
