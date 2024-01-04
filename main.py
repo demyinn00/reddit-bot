@@ -4,7 +4,8 @@ load_dotenv()
 from reddit_bot import RedditBot
 
 def main():
-    subreddit_names = ["pleasedontbanmedebug", "rlydontbanmedebug"]
+    # Add the list of subreddits you'd like to add here
+    subreddit_names = ["thelastdebuggernoban", "lastsubredditdebugger"]
     bot = RedditBot(subreddit_names)
     bot.start_streaming()
 

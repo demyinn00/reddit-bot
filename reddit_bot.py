@@ -15,6 +15,7 @@ class RedditBot:
             password=os.getenv("REDDIT_PASSWORD")
         )
         self.subreddits = [self.reddit.subreddit(name) for name in subreddit_names]
+        self.bot_username = os.getenv("REDDIT_USERNAME")
         self.ureg = UnitRegistry()
         self.lhm = LikeHowMuch()
 
@@ -77,6 +78,9 @@ class RedditBot:
             self.process_comment(comment)
 
     def process_comment(self, comment):
+        if comment.author.name == self.bot_username:
+            return
+
         metric_units = self.detect_metric(comment.body)
         imperial_units = self.detect_imperial(comment.body)
 
