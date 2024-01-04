@@ -30,7 +30,8 @@ class RedditBot:
             "micrograms": "µg", "microgram": "µg",
             "liters": "l", "liter": "l", "litre": "l", "litres": "l",
             "milliliters": "ml", "milliliter": "ml", "millilitre": "ml", "millilitres": "ml",
-            "celsius": "°C",
+            "kiloliters": "kl", "kl": "kl", "kilolitre": "kl", "kilolitres": "kl", "kiloliter": "kl",
+            "celsius": "degC", "c": "degC", "degrees c": "degC", "degrees celsius": "degC",
             "inches": "in", "inch": "in",
             "feet": "ft", "foot": "ft",
             "yards": "yd", "yard": "yd",
@@ -42,19 +43,19 @@ class RedditBot:
             "pints": "pt", "pint": "pt",
             "gallons": "gal", "gallon": "gal",
             "fluid ounces": "imperial_fluid_ounce", "fluid ounce": "imperial_fluid_ounce",
-            "fahrenheit": "°F"
+            "fahrenheit": "degF", "f": "degF", "degrees f": "degF", "degrees fahrenheit": "degF",
         }
         self.measurement_types = {
             "length": ["m", "km", "cm", "mm", "in", "ft", "yd", "mi"],
             "mass": ["g", "kg", "mg", "cg", "µg", "lb", "oz", "ton"],
             "volume": ["kl", "l", "ml", "cl", "dl", "qt", "pt", "gal", "fl oz", "imperial_fluid_ounce"],
-            "temperature": ["°C", "°F"]
+            "temperature": ["degC", "degF"]
         }
         self.imperial_types = {
             "length": ["in", "ft", "yd", "mi"],
             "mass": ["oz", "lb", "ton"],
             "volume": ["imperial_fluid_ounce", "pt", "qt", "gal"],
-            "temperature": ["°F"]
+            "temperature": ["degF"]
         }
 
     def start_streaming(self):
@@ -77,18 +78,13 @@ class RedditBot:
 
     def process_comment(self, comment):
         metric_units = self.detect_metric(comment.body)
-        print("Metric Units Detected:", metric_units)
-
         imperial_units = self.detect_imperial(comment.body)
-        print("Imperial Units Detected:", imperial_units)
 
         need_response = self.response_needed(metric_units, imperial_units)
-        print(f"Need a response: {need_response}")
-
         if need_response: 
             response_text = self.generate_response(metric_units)
             print(f"Response: {response_text}")
-            # self.respond_to_comment(comment, response_text)
+            self.respond_to_comment(comment, response_text)
 
     def respond_to_comment(self, comment, response_text):
         try:
@@ -101,7 +97,7 @@ class RedditBot:
         length_pattern = r"\b(\d+(\.\d+)?)\s?(m|meter|metre|kilometer|kilometre|centimeter|centimetre|millimeter|millimetre|km|cm|mm)s?\b"
         mass_pattern = r"\b(\d+(\.\d+)?)\s?(g|gram|kilogram|milligram|centigram|microgram|kg|mg|cg|µg)s?\b"
         volume_pattern = r"\b(\d+(\.\d+)?)\s?(kl|kiloliter|kilolitre|l|liter|litre|milliliter|millilitre|centiliter|centilitre|deciliter|decilitre|ml|cl|dl)s?\b"
-        temperature_pattern = r"\b(\d+(\.\d+)?)\s?°?C\b|celsius\b"
+        temperature_pattern = r"(\d+(\.\d+)?)\s?(degrees\s)?(C|c|celsius|Celsius)\b"
 
         return self.extract_units(text, [length_pattern, mass_pattern, volume_pattern, temperature_pattern])
 
@@ -109,7 +105,7 @@ class RedditBot:
         length_pattern = r"\b(\d+(\.\d+)?)\s?(in|inch|inches|ft|foot|feet|yd|yard|yards|mi|mile|miles)s?\b"
         mass_pattern = r"\b(\d+(\.\d+)?)\s?(lb|lbs|pound|pounds|oz|ounce|ounces|ton|tons)s?\b"
         volume_pattern = r"\b(\d+(\.\d+)?)\s?(qt|quart|quarts|pt|pint|pints|gal|gallon|gallons|fl oz|fluid ounce|fluid ounces)s?\b"
-        temperature_pattern = r"\b(\d+(\.\d+)?)\s?°?F\b|fahrenheit\b"
+        temperature_pattern = r"(\d+(\.\d+)?)\s?(degrees\s)?(F|f|fahrenheit|Fahrenheit)\b"
 
         return self.extract_units(text, [length_pattern, mass_pattern, volume_pattern, temperature_pattern])
 
@@ -121,8 +117,15 @@ class RedditBot:
         for pattern in patterns:
             matches = re.findall(pattern, text)
             for match in matches:
-                value, unit = match[0], self.normalize_unit(match[2])
-                units_data.append((value, unit))
+                value = match[0]
+                if len(match) > 2 and match[2]:
+                    unit = match[2]
+                elif "degrees" in pattern:
+                    unit = "C"
+                else:
+                    unit = ""
+                normalized_unit = self.normalize_unit(unit)
+                units_data.append((value, normalized_unit))
         return units_data
 
     def response_needed(self, metric_units, imperial_units): 
@@ -183,11 +186,10 @@ class RedditBot:
 
         return last_pair
 
-
     def convert_to_imperial(self, metric_value, metric_unit, imperial_unit):
         if self.is_compatible(metric_unit, imperial_unit):
             try:
-                metric_quantity = self.ureg(f"{metric_value} {metric_unit}")
+                metric_quantity = self.ureg.Quantity(float(metric_value), metric_unit)
                 imperial_quantity = metric_quantity.to(imperial_unit)
                 return imperial_quantity.magnitude
             except Exception as e:
