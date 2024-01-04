@@ -3,6 +3,9 @@
 ## Description
 This project is a Reddit bot designed to automatically detect and respond to comments containing metric measurements in specified subreddits. The bot converts these measurements into imperial units and provides fun, relatable comparisons to help illustrate the converted measurements. It aims to enhance understanding and engagement in discussions involving different measurement systems.
 
+## Deployment
+I've deployed this bot through Heroku, but the subreddits keep getting banned. I wanted to set up example threads for demonstration purposes, but they keep getting removed. I believe this is because I've been running this bot frequently and it's made a lot of posts that might flag Reddit's spam filters. 
+
 ## Setup
 
 ### Installation
@@ -25,6 +28,7 @@ REDDIT_USERNAME='your_bot_username'
 REDDIT_PASSWORD='your_bot_password'
 ```
 ### Running the Bot
+Before running the bot, input the subreddits you wish to monitor inside of `main.py` <br>
 Execute the main script to start the bot:
 ```
 python3 main.py
