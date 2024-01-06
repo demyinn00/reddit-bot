@@ -122,10 +122,10 @@ class RedditBot:
             matches = re.findall(pattern, text)
             for match in matches:
                 value = match[0]
-                if len(match) > 2 and match[2]:
+                if len(match) == 4 and match[3]:
+                    unit = (match[2] + match[3]).strip()
+                elif len(match) == 3 and match[2]:
                     unit = match[2]
-                elif "degrees" in pattern:
-                    unit = "C"
                 else:
                     unit = ""
                 normalized_unit = self.normalize_unit(unit)
